@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="求职甲 - AI产品经理 HTML 简历">
+    <title>求职甲 - AI产品经理</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="resume-shell">
+      <aside class="control-panel" aria-label="简历操作">
+        <div>
+          <p class="eyebrow">HTML Resume</p>
+          <h1>AI 可读、可改、可投递的简历</h1>
+          <p>这份页面由结构化数据驱动。修改内容时优先编辑 <code>resume-data.js</code>，样式修改编辑 <code>styles.css</code>。</p>
+        </div>
+        <div class="actions">
+          <label class="upload-control" for="avatar-upload">
+            上传头像
+            <input id="avatar-upload" type="file" accept="image/png,image/jpeg,image/webp">
+          </label>
+          <button type="button" data-action="clear-avatar">恢复头像占位</button>
+          <button type="button" data-action="print">打印 / 导出 PDF</button>
+          <button type="button" data-action="copy-markdown">复制 Markdown</button>
+          <button type="button" data-action="copy-json">复制 JSON</button>
+        </div>
+      </aside>
+
+      <main class="resume-page" id="resume" aria-label="求职甲简历">
+        <section class="hero">
+          <div>
+            <p class="resume-type">Personal Resume</p>
+            <h2 id="candidate-name"></h2>
+            <p class="target" id="candidate-target"></p>
+            <p class="summary" id="candidate-summary"></p>
+          </div>
+          <div class="portrait" aria-label="头像占位">
+            <img id="candidate-avatar" alt="求职甲头像" hidden>
+            <span id="avatar-fallback">甲</span>
+          </div>
+        </section>
+
+        <section class="info-grid" id="personal-info" aria-label="个人信息"></section>
+
+        <section class="resume-section" id="internships" aria-labelledby="internships-title">
+          <div class="section-title">
+            <span></span>
+            <h3 id="internships-title">实习经历 <em>Internship experience</em></h3>
+          </div>
+          <div class="timeline" data-list="internships"></div>
+        </section>
+
+        <section class="resume-section" id="other-experience" aria-labelledby="other-title">
+          <div class="section-title">
+            <span></span>
+            <h3 id="other-title">其他经历 <em>Other experience</em></h3>
+          </div>
+          <div class="cards" data-list="otherExperience"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="resume-data.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

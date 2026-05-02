@@ -1,13 +1,15 @@
 ---
 name: ai-native-resume
-description: "This skill should be used when converting a user's resume into an AI-native HTML resume, including PDF/DOCX resume uploads, 简历html化, HTML resume, resume to HTML, AI简历, resume.json, editable resume template, avatar upload, previewing in browser, and exporting an A4 PDF."
+description: "This skill should be used when converting or tailoring a resume as an AI-native HTML resume. This includes PDF/DOCX resume uploads, 简历html化, HTML resume, resume to HTML, AI简历, resume-data.js, editable resume template, avatar upload, previewing in browser, exporting an A4 PDF, JD匹配, 岗位JD定制, targeted resume, resume tailoring, ATS-style keyword alignment, and generating a JD match report."
 ---
 
 # AI-native Resume
 
 ## Overview
 
-Convert an uploaded resume into a polished, editable, AI-friendly HTML resume using the bundled A4 template. Produce a local HTML project that can be opened in a browser, edited via structured data, and exported to PDF.
+Convert an uploaded resume into a polished, editable, AI-friendly HTML resume using the bundled A4 template, or tailor an existing AI-native HTML resume to a target job description. Produce a local HTML project that can be opened in a browser, edited via structured data, customized for specific roles, and exported to PDF.
+
+Keep the skill name `ai-native-resume`. Treat JD tailoring as a core workflow inside the same skill because it depends on the same structured data, HTML template, A4 fit loop, and PDF export pipeline.
 
 Use the bundled template in `assets/template/` as the starting point:
 
@@ -17,7 +19,21 @@ Use the bundled template in `assets/template/` as the starting point:
 - `styles.css`
 - `avatar.jpeg`
 
-## Workflow
+For users who repeatedly tailor the same resume across many roles, optionally create or read a candidate material library using `references/candidate-material-library.md`. Load that reference only when the user asks to manage reusable projects, a base resume, or repeated JD-specific versions.
+
+## Workflow Selection
+
+Use the resume HTMLization workflow when the user provides a PDF/DOCX/raw resume and wants an AI-friendly HTML resume.
+
+Use the JD tailoring workflow when the user provides:
+
+- an existing AI-native HTML resume project or `resume-data.js`
+- a target job description, JD, hiring post, or role requirements
+- a request such as “根据这个岗位改简历”, “JD匹配简历”, “targeted resume”, “tailor my resume”, or “ATS优化”
+
+If both a raw resume and a JD are provided, first convert the resume to the AI-native HTML structure, then run JD tailoring on the generated `resume-data.js`.
+
+## Resume HTMLization Workflow
 
 1. Inspect the uploaded resume.
    - For PDF input, use PDF extraction and visual review when available.
@@ -32,6 +48,49 @@ Use the bundled template in `assets/template/` as the starting point:
 6. Open or test the HTML in a browser when possible.
 7. Measure A4 fit and iterate until the resume uses the page well.
 8. Export or verify A4 PDF output when requested.
+
+## JD Tailoring Workflow
+
+1. Read the existing `resume-data.js` and inspect the rendered resume when useful.
+   - If a candidate material library exists, also read `candidate-materials/self-profile.md`, `candidate-materials/resume-base.md`, and the relevant files under `candidate-materials/projects/`.
+   - If no library exists, proceed from `resume-data.js`; do not require the user to set up a library for one-off tailoring.
+2. Parse the JD into a role profile:
+   - role title, level, domain, product/business direction
+   - core responsibilities
+   - required capabilities
+   - preferred capabilities
+   - tools, methods, and domain keywords
+   - hidden evaluation signals such as ownership, data-driven work, cross-functional execution, AI literacy, growth, commercialization, or technical depth
+3. Build a JD-to-resume evidence matrix before rewriting:
+   - map every important JD requirement to one or more resume evidence points
+   - classify each mapping as strong, partial, transferable, missing, or unsupported
+   - identify which existing experiences deserve more visual and textual weight
+   - identify unsupported JD requirements that must not be fabricated
+4. Decide a tailoring strategy:
+   - rewrite `basics.title`, `basics.intent`, and `basics.summary` to match the role honestly
+   - reorder or rephrase `highlights` so the strongest JD-relevant capabilities appear first
+   - prioritize internship/work achievements that prove the JD’s core requirements
+   - compress less relevant experience instead of deleting meaningful evidence by default
+   - preserve the A4 one-page constraint
+5. Select and reframe experience:
+   - choose the 2-4 strongest experiences or projects for this JD
+   - explain important selected and excluded experiences in the match report
+   - reframe the same project by role without changing facts, e.g. product, growth, engineering, operations, or commercialization
+   - keep interview-style STAR detail in source notes or the report, not inside the one-page resume unless it compresses cleanly
+6. Rewrite `resume-data.js` conservatively:
+   - improve positioning, specificity, and keyword alignment
+   - convert vague bullets into evidence-backed impact statements
+   - keep every claim traceable to the original resume
+   - avoid adding fake companies, fake metrics, fake tools, fake responsibilities, or inflated ownership
+7. Validate JavaScript syntax, browser rendering, A4 fit, and PDF page count.
+8. Produce a concise JD match report with:
+   - overall match assessment
+   - strongest aligned experiences
+   - selected and excluded experiences with reasons
+   - keyword/capability coverage
+   - weak or missing evidence
+   - unsupported claims intentionally avoided
+   - files changed and export status
 
 ## Data Editing Rules
 
@@ -67,6 +126,89 @@ Prefer concise, impact-oriented bullets. For each internship, use:
 - each achievement with `label` + `text`
 
 Avoid stuffing too much content into one page. If the extracted resume is long, compress rather than shrink text too aggressively.
+
+## JD Matching Rules
+
+Treat JD tailoring as evidence-driven repositioning, not keyword stuffing.
+
+Use this matching model:
+
+| Match Type | Meaning | Action |
+| --- | --- | --- |
+| Strong | Resume contains direct evidence for the JD requirement | Move forward and sharpen wording |
+| Partial | Resume contains related evidence but lacks exact scope or keywords | Rephrase with accurate transferable language |
+| Transferable | Resume proves the underlying capability in another context | Connect the capability without pretending domain experience |
+| Missing | No evidence exists in the resume | Leave out or ask for additional facts if essential |
+| Unsupported | The JD asks for something the resume cannot support | Do not invent; mention as a gap in the report |
+
+Apply role-specific emphasis:
+
+- AI product roles: model capability understanding, user scenarios, prompt/agent/RAG/workflow literacy, evaluation, data feedback, productization
+- growth product roles: metrics, funnel, conversion, retention, experiments, segmentation, growth loops
+- platform/B2B product roles: requirements abstraction, workflow design, API/developer experience, enterprise scenarios, stakeholder alignment
+- commercialization roles: revenue model, customer needs, pricing, conversion, sales/operations collaboration, business metrics
+- technical roles: stack relevance, project depth, system design, measurable engineering output, code or deployment evidence
+
+Keep the most JD-relevant proof in the first third of the resume whenever possible.
+
+## Optional Candidate Material Library
+
+Use a persistent material library when the user applies to many roles or has more source material than fits in one HTML resume.
+
+Recommended local structure:
+
+```text
+candidate-materials/
+├── self-profile.md
+├── resume-base.md
+└── projects/
+```
+
+Use `self-profile.md` for stable background, preferences, and differentiators. Use `resume-base.md` for the complete unsqueezed history. Use one project file per reusable project, with context, actions, results, raw materials, and capability tags.
+
+When creating or updating the library:
+
+- keep raw materials separate from final resume copy
+- preserve complete source detail even if the A4 resume is compressed
+- tag each project by capability, domain, tools, and ownership level
+- do not load every project into context if the library becomes large; inspect filenames/tags first, then read likely matches
+
+When tailoring from the library:
+
+- select the strongest projects for the JD before rewriting
+- state why selected projects were selected
+- state why notable excluded projects were excluded
+- use project raw material to improve specificity while preserving truthfulness
+
+## Truthfulness and Risk Rules
+
+Never fabricate:
+
+- employment, internships, education, awards, certifications, or projects
+- quantitative metrics not present or inferable from source material
+- tools, programming languages, model frameworks, or platforms
+- ownership level such as “led”, “owned”, “independently built”, or “managed” unless supported
+
+Prefer safer verbs when evidence is limited:
+
+- use “参与”, “协助”, “负责部分”, “支持”, “整理”, “推动” for partial ownership
+- use “熟悉”, “了解”, “使用过” only when the original evidence supports it
+- avoid turning interest or observation into work experience
+
+If a JD-critical requirement is missing and the user may plausibly have it, ask for one focused clarification or list it in the match report as information to supplement.
+
+## Versioning Rules for Tailored Resumes
+
+When tailoring an existing resume, preserve the original by default unless the user explicitly asks to overwrite it.
+
+Recommended output patterns:
+
+- copy the existing resume project to a role-specific folder such as `resume-ai-product/`
+- or create a role-specific data file such as `resume-data.ai-product.js` only if the template is adjusted to load it
+- include a short `jd-match-report.md` when the task involves JD tailoring
+- if a material library is used, keep it outside role-specific output folders so multiple tailored versions share one source of truth
+
+If the user asks for a single final resume only, overwriting `resume-data.js` is acceptable after preserving enough context in the conversation or report.
 
 ## Layout and Quality Rules
 

@@ -1,6 +1,6 @@
-# AI Native Resume Skill｜AI 原生 HTML 简历生成器
+# AI Native Resume Skill｜AI 原生 HTML 简历工作流
 
-把 PDF / DOCX 简历转换成 **AI 友好、可编辑、可预览、可导出 A4 PDF** 的 HTML 简历。
+把 PDF / DOCX 简历转换成 **AI 友好、可编辑、可预览、可导出 A4 PDF** 的 HTML 简历，并支持基于岗位 JD 生成定制化版本。
 
 在线预览：
 
@@ -28,6 +28,8 @@ avatar.jpeg     -> 默认头像
 
 - 浏览器打开即可预览
 - 内容集中在 `resume-data.js`，方便 AI 修改
+- 可以根据岗位 JD 重排重点、改写摘要和优化经历表达
+- 可以输出 JD 匹配报告，说明强匹配、弱匹配和不能编造的缺口
 - 支持头像上传
 - 支持复制 Markdown / JSON
 - 支持导出一页 A4 PDF
@@ -38,6 +40,7 @@ avatar.jpeg     -> 默认头像
 - 想把 PDF 简历 HTML 化的人
 - 想让 AI 更容易修改简历的人
 - 想针对不同 JD 快速改简历的人
+- 想为不同岗位保留多份定制版本的人
 - 想把简历做成个人主页的人
 - 想用 Verdent / Claude Code / Cursor 管理简历的人
 - 想做 Resume as Code / AI-native Resume 的开发者
@@ -50,6 +53,8 @@ avatar.jpeg     -> 默认头像
 ├── SKILL.md
 ├── ai-native-resume.skill
 ├── index.html
+├── references/
+│   └── candidate-material-library.md
 └── assets/
     └── template/
         ├── index.html
@@ -64,6 +69,7 @@ avatar.jpeg     -> 默认头像
 - `SKILL.md`：Verdent Skill 的核心说明文件
 - `ai-native-resume.skill`：打包后的 Skill 文件，可用于分发
 - `index.html`：GitHub Pages 展示页
+- `references/candidate-material-library.md`：可选的长期求职素材库说明
 - `assets/template/`：真正的 HTML 简历模板
 
 ## 如何使用：普通用户
@@ -126,6 +132,18 @@ avatar.jpeg     -> 默认头像
 把我的简历转成 AI-friendly HTML resume，头像用我上传的照片，要求预览和 PDF 一致。
 ```
 
+也可以基于岗位 JD 定制已有 HTML 简历：
+
+```text
+这是我的 resume-data.js 和目标岗位 JD，请帮我生成一版更匹配这个 JD 的 HTML 简历，并输出匹配报告。
+```
+
+或者：
+
+```text
+根据这个 AI 产品经理 JD 定制我的简历，要求不编造经历，保留 A4 一页，并告诉我哪些 JD 要求目前证据不足。
+```
+
 Skill 会做这些事：
 
 1. 读取你的 PDF / DOCX 简历
@@ -136,6 +154,57 @@ Skill 会做这些事：
 6. 打开浏览器预览
 7. 检查 A4 页面是否刚好填满
 8. 导出或验证 PDF
+
+如果提供了岗位 JD，Skill 还会：
+
+1. 把 JD 拆成岗位画像、核心职责、必备能力、加分项和隐含考察点
+2. 建立 JD 要求与简历证据的匹配矩阵
+3. 判断每项要求是强匹配、部分匹配、可迁移、缺失还是不应强写
+4. 选择最适合这个 JD 的经历，并说明选用和排除原因
+5. 按岗位视角重构同一段项目叙事，比如产品、增长、研发、运营、商业化
+6. 调整 `basics.summary`、`highlights`、经历顺序和 bullet 表达
+7. 把最相关的证据放到简历前部
+8. 保持真实性，不虚构公司、指标、工具、职责或成果
+9. 输出 `jd-match-report.md`，说明匹配情况和建议补充的信息
+
+## 根据 JD 定制简历
+
+这个 Skill 现在不仅能把简历 HTML 化，也能基于目标岗位 JD 做定制化改写。
+
+输入：
+
+```text
+1. 已有 PDF / DOCX 简历，或已有 HTML 简历项目
+2. 目标岗位 JD
+3. 可选：目标公司、岗位方向、投递版本要求
+```
+
+输出：
+
+```text
+1. 针对该 JD 的 HTML 简历
+2. 一页 A4 PDF 导出版本
+3. JD 匹配报告 jd-match-report.md
+4. 被强化的关键词和能力说明
+5. 不建议强写或无法证明的能力缺口
+```
+
+定制逻辑：
+
+- 先拆 JD，而不是直接改简历
+- 建立 JD 要求与简历证据的匹配矩阵
+- 把强相关经历前置
+- 强化真实存在的经历和成果
+- 压缩与 JD 相关性低的内容
+- 不做无证据的关键词堆砌
+- 不编造公司、指标、工具、职责或成果
+
+适合的使用方式：
+
+```text
+这是我的简历和目标 JD，请用 ai-native-resume skill 生成一版定制简历。
+要求输出 HTML、A4 PDF，并附上 JD 匹配报告。
+```
 
 ## 如何安装 Skill
 
@@ -320,6 +389,57 @@ https://YOUR_USERNAME.github.io/YOUR_REPO/
 - 运营
 
 主要改 `resume-data.js` 即可。
+
+## 根据 JD 定制简历的原则
+
+JD 定制不是简单堆关键词，而是证据驱动的简历重组。
+
+推荐流程：
+
+1. 解析 JD：岗位、职责、能力、关键词、隐含考察点
+2. 解析简历：教育、经历、项目、技能、指标、行业经验
+3. 建立匹配矩阵：每个 JD 要求都要找到对应证据
+4. 制定策略：决定哪些经历前置、哪些 bullet 强化、哪些内容压缩
+5. 改写简历：只重写有证据支撑的内容
+6. 输出报告：告诉用户强项、弱项、缺口和本次修改内容
+
+真实性规则：
+
+- 不编造经历
+- 不虚构指标
+- 不把“参与”写成“主导”
+- 不把“了解”写成“负责”
+- 不把兴趣或观察写成工作经验
+- 没有证据的 JD 要求应在报告中提示用户补充
+
+## 可选：个人素材库
+
+如果用户需要长期针对多个岗位定制简历，可以维护一个可复用素材库：
+
+```text
+candidate-materials/
+├── self-profile.md
+├── resume-base.md
+└── projects/
+    ├── project-a.md
+    └── project-b.md
+```
+
+它的作用是：
+
+- `self-profile.md` 保存稳定的个人背景、目标岗位、偏好和差异化标签
+- `resume-base.md` 保存完整未压缩的全量简历
+- `projects/` 每个项目单独存一份，保留背景、行动、结果、原始素材和能力标签
+
+这样每次定制 JD 时，不需要从零改简历，而是从同一个素材库选择最匹配的项目和证据，再生成一份 A4 HTML 简历。
+
+这个模式值得借鉴，但不应强制使用。一次性简历定制直接基于 `resume-data.js` 就够了；只有当用户反复投递多个岗位、素材很多、需要长期版本管理时，再建立素材库。
+
+是否改名：
+
+短期不建议改名。`ai-native-resume` 已经覆盖了核心概念：把简历变成 AI 友好的结构化 HTML，并支持后续 AI 修改。JD 定制是这个工作流的自然下一步，适合放在同一个 Skill 里。
+
+如果未来扩展到 ATS 打分、求职信、面试准备、批量岗位版本、投递策略等完整求职系统，再考虑拆出独立的 `resume-jd-tailor` 或 `career-application-copilot`。
 
 ## Built with Verdent
 
